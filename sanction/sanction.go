@@ -2,9 +2,14 @@ package sanction
 
 import (
 	"database/sql"
+	"errors"
+	"fmt"
 	"github.com/anhgelus/gokord"
 	"github.com/anhgelus/gokord/utils"
 	"gorm.io/gorm"
+	"strconv"
+	"strings"
+	"time"
 )
 
 type Type struct {
@@ -12,6 +17,12 @@ type Type struct {
 	Name        string `gorm:"unique"`
 	Description string
 	Retention   uint8
+}
+
+type Duration struct {
+	Days   uint
+	Months uint
+	Years  uint
 }
 
 var types []*Type
@@ -64,4 +75,56 @@ func SetupSanctionTypes(t []*Type) error {
 	}
 	types = t
 	return nil
+}
+
+func LoadDuration(duration string) (*Duration, error) {
+	splitted := strings.Split(duration, " ")
+	if len(splitted) > 3 {
+		return nil, errors.New("invalid duration")
+	}
+	dur := Duration{}
+	for _, s := range splitted {
+		runed := []rune(s)
+		t := runed[len(runed)-1]
+		v, err := strconv.Atoi(string(runed[:len(runed)-1]))
+		if err != nil {
+			return nil, err
+		}
+		switch t {
+		case 'd':
+			dur.Days = uint(v)
+		case 'm':
+			dur.Months = uint(v)
+		case 'y':
+			dur.Years = uint(v)
+		default:
+			return nil, errors.New("invalid duration")
+		}
+	}
+	return &dur, nil
+}
+
+func (d *Duration) ToString() string {
+	str := ""
+	if d.Years > 0 {
+		str += fmt.Sprintf("%d years", d.Years)
+	}
+	if d.Months > 0 {
+		if str != "" {
+			str += " "
+		}
+		str += fmt.Sprintf("%d months", d.Months)
+	}
+	if d.Days > 0 {
+		if str != "" {
+			str += " "
+		}
+		str += fmt.Sprintf("%d days", d.Days)
+	}
+	return str
+}
+
+func (d *Duration) ToUint() uint {
+	day := 24 * uint(time.Hour)
+	return d.Days*day + d.Months*30 + d.Years*12*30*day
 }

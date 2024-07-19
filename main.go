@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"flag"
+	"github.com/anhgelus/dreamskold/commands"
 	"github.com/anhgelus/dreamskold/sanction"
 	"github.com/anhgelus/gokord"
 	"github.com/bwmarrin/discordgo"
@@ -66,7 +67,8 @@ func main() {
 			"proof",
 			"Link to the proof (discord message)",
 		).IsRequired()).
-		SetPermission(&ban)
+		SetPermission(&ban).
+		SetHandler(commands.Ban)
 
 	bot := gokord.Bot{
 		Token: token,
