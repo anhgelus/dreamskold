@@ -15,7 +15,7 @@ type SanctionConfig struct {
 }
 
 type RetentionConfig struct {
-	ID                int   `toml:"id"`
+	ID                int8  `toml:"id"`
 	Retention         int64 `toml:"retention"`
 	RelativeRetention int8  `toml:"relative_retention"`
 }

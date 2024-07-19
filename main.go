@@ -41,7 +41,7 @@ func main() {
 		panic(err)
 	}
 
-	err = sanction.SetupSanctionTypes(sanctionConfig.Sanctions)
+	err = sanction.SetupSanctionTypes(sanctionConfig.Sanctions, sanctionConfig.Retentions)
 	if err != nil {
 		panic(err)
 	}
@@ -124,7 +124,12 @@ func main() {
 }
 
 func afterInit(dg *discordgo.Session) {
-	utils.NewTimer(15*time.Minute, func(stop chan struct{}) {
+	client, err := gokord.BaseCfg.Redis.Get()
+	if err != nil {
+		panic(err)
+	}
 
+	utils.NewTimer(15*time.Minute, func(stop chan struct{}) {
+		sanction.UpdateRecord(dg, client)
 	})
 }

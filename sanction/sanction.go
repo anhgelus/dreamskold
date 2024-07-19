@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/anhgelus/dreamskold/config"
 	"github.com/anhgelus/gokord"
 	"github.com/anhgelus/gokord/utils"
 	"gorm.io/gorm"
@@ -16,7 +17,7 @@ type Type struct {
 	gorm.Model
 	Name        string `gorm:"unique" toml:"name"`
 	Description string `toml:"description"`
-	Retention   uint8  `toml:"retention"`
+	Retention   int8   `toml:"retention"`
 }
 
 type Duration struct {
@@ -25,9 +26,12 @@ type Duration struct {
 	Years  uint
 }
 
-var types []*Type
+var (
+	types      []*Type
+	retentions map[int8]*config.RetentionConfig
+)
 
-func SetupSanctionTypes(t []*Type) error {
+func SetupSanctionTypes(t []*Type, retCfg []*config.RetentionConfig) error {
 	res := gokord.DB.Find(&Type{})
 	if res.Error != nil {
 		return res.Error
@@ -74,6 +78,11 @@ func SetupSanctionTypes(t []*Type) error {
 		}
 	}
 	types = t
+	var retMap map[int8]*config.RetentionConfig
+	for _, ret := range retCfg {
+		retMap[ret.ID] = ret
+	}
+	retentions = retMap
 	return nil
 }
 
