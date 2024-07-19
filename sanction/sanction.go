@@ -14,9 +14,9 @@ import (
 
 type Type struct {
 	gorm.Model
-	Name        string `gorm:"unique"`
-	Description string
-	Retention   uint8
+	Name        string `gorm:"unique" toml:"name"`
+	Description string `toml:"description"`
+	Retention   uint8  `toml:"retention"`
 }
 
 type Duration struct {

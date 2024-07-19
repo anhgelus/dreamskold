@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"flag"
 	"github.com/anhgelus/dreamskold/commands"
+	"github.com/anhgelus/dreamskold/config"
 	"github.com/anhgelus/dreamskold/sanction"
 	"github.com/anhgelus/gokord"
 	"github.com/bwmarrin/discordgo"
@@ -18,6 +19,7 @@ var (
 		Minor: 0,
 		Patch: 0,
 	} // git version: 0.0.0
+	sanctionConfig config.SanctionConfig
 )
 
 func init() {
@@ -26,7 +28,18 @@ func init() {
 }
 
 func main() {
-	err := gokord.SetupConfigs([]*gokord.ConfigInfo{})
+	err := gokord.SetupConfigs([]*gokord.ConfigInfo{
+		{
+			Cfg:     &sanctionConfig,
+			Name:    "sanction",
+			Default: config.DefaultSanctionConfig,
+		},
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	err = sanction.SetupSanctionTypes(sanctionConfig.Sanctions)
 	if err != nil {
 		panic(err)
 	}
@@ -36,6 +49,13 @@ func main() {
 		panic(err)
 	}
 
+	banSanctionType := sanction.Type{Name: sanctionConfig.BanCommandSanction}
+	err = gokord.DB.First(&banSanctionType).Error
+	if err != nil {
+		panic(err)
+	}
+	sanction.BanCommandSanction = banSanctionType
+
 	innovations, err := gokord.LoadInnovationFromJson(updatesData)
 	if err != nil {
 		panic(err)
@@ -43,7 +63,7 @@ func main() {
 
 	adm := gokord.AdminPermission
 	ban := int64(discordgo.PermissionBanMembers)
-	mod := discordgo.PermissionModerateMembers
+	mod := int64(discordgo.PermissionModerateMembers)
 
 	banCmd := gokord.NewCommand("ban", "Ban a member").
 		HasOption().

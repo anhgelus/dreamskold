@@ -78,7 +78,7 @@ func Ban(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		}
 		return
 	}
-	err = m.Sanction(sanction.CreateSanction(nil, reason, messageProof.Content, dur.ToUint()))
+	err = m.Sanction(sanction.CreateSanction(&sanction.BanCommandSanction, reason, messageProof.Content, dur.ToUint()))
 	if err != nil {
 		utils.SendAlert("ban.go - failed to apply sanction", err.Error())
 		err = resp.IsEphemeral().Message("Failed to apply sanction").Send()

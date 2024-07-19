@@ -7,6 +7,10 @@ import (
 	"gorm.io/gorm"
 )
 
+var (
+	BanCommandSanction Type
+)
+
 type ModRecord struct {
 	gorm.Model
 	UserID   string

@@ -1,0 +1,11 @@
+ban_command_sanction = "ban"
+
+[[retentions]]
+id = 0
+#retention = 63072000 # two years
+relative_retention = 3 # the length of the sanction * 3
+
+[[sanctions]]
+name = "ban"
+description = "A simple ban"
+retention = 0
