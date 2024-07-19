@@ -5,6 +5,7 @@ go 1.22
 require (
 	github.com/anhgelus/gokord v0.5.1
 	github.com/bwmarrin/discordgo v0.28.1
+	gorm.io/gorm v1.25.11
 )
 
 require (
@@ -24,5 +25,4 @@ require (
 	golang.org/x/sys v0.22.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
 	gorm.io/driver/postgres v1.5.9 // indirect
-	gorm.io/gorm v1.25.11 // indirect
 )
