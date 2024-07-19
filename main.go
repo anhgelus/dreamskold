@@ -7,7 +7,9 @@ import (
 	"github.com/anhgelus/dreamskold/config"
 	"github.com/anhgelus/dreamskold/sanction"
 	"github.com/anhgelus/gokord"
+	"github.com/anhgelus/gokord/utils"
 	"github.com/bwmarrin/discordgo"
+	"time"
 )
 
 var (
@@ -122,5 +124,7 @@ func main() {
 }
 
 func afterInit(dg *discordgo.Session) {
+	utils.NewTimer(15*time.Minute, func(stop chan struct{}) {
 
+	})
 }

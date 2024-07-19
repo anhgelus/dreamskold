@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/anhgelus/gokord"
 	"github.com/anhgelus/gokord/utils"
+	"github.com/bwmarrin/discordgo"
 	"gorm.io/gorm"
 )
 
@@ -71,4 +72,10 @@ func CreateSanction(sanction *Type, reason string, proof string, duration uint) 
 		Duration: duration,
 		Sanction: sanction,
 	}
+}
+
+func UpdateRecord(s *discordgo.Session) {
+	// query all record in redis and check (in goroutine)
+	// query all record except removed one and stored one in redis
+	//	if they expire in less than one day, put them in redis
 }
