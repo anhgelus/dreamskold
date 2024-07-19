@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"flag"
+	"github.com/anhgelus/dreamskold/sanction"
 	"github.com/anhgelus/gokord"
 	"github.com/bwmarrin/discordgo"
 )
@@ -29,7 +30,7 @@ func main() {
 		panic(err)
 	}
 
-	err = gokord.DB.AutoMigrate()
+	err = gokord.DB.AutoMigrate(&sanction.Type{}, &sanction.ModRecord{})
 	if err != nil {
 		panic(err)
 	}
