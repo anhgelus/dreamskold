@@ -40,6 +40,32 @@ func main() {
 	}
 
 	adm := gokord.AdminPermission
+	ban := int64(discordgo.PermissionBanMembers)
+	mod := discordgo.PermissionModerateMembers
+
+	banCmd := gokord.NewCommand("ban", "Ban a member").
+		HasOption().
+		AddOption(gokord.NewOption(
+			discordgo.ApplicationCommandOptionUser,
+			"member",
+			"Member to ban",
+		).IsRequired()).
+		AddOption(gokord.NewOption(
+			discordgo.ApplicationCommandOptionString,
+			"duration",
+			"Duration of the ban",
+		).IsRequired()).
+		AddOption(gokord.NewOption(
+			discordgo.ApplicationCommandOptionString,
+			"reason",
+			"Reason of the ban",
+		).IsRequired()).
+		AddOption(gokord.NewOption(
+			discordgo.ApplicationCommandOptionString,
+			"proof",
+			"Link to the proof (discord message)",
+		).IsRequired()).
+		SetPermission(&ban)
 
 	bot := gokord.Bot{
 		Token: token,
@@ -61,7 +87,9 @@ func main() {
 				Content: "DreamSköld " + Version.String(),
 			},
 		},
-		Commands:    nil,
+		Commands: []*gokord.GeneralCommand{
+			banCmd,
+		},
 		AfterInit:   afterInit,
 		Version:     nil,
 		Innovations: innovations,
