@@ -1,7 +1,6 @@
 package sanction
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/anhgelus/dreamskold/config"
@@ -32,28 +31,10 @@ var (
 )
 
 func SetupSanctionTypes(t []*Type, retCfg []*config.RetentionConfig) error {
-	res := gokord.DB.Find(&Type{})
-	if res.Error != nil {
-		return res.Error
-	}
-	rows, err := res.Rows()
+	var scannedTypes []*Type
+	err := gokord.DB.Find(&scannedTypes).Error
 	if err != nil {
 		return err
-	}
-	defer func(rows *sql.Rows) {
-		err = rows.Close()
-		if err != nil {
-			utils.SendAlert("sanction.go - closing rows", err.Error())
-		}
-	}(rows)
-	var scannedTypes []*Type
-	for rows.Next() {
-		var ty *Type
-		err = rows.Scan(&ty)
-		if err != nil {
-			utils.SendAlert("sanction.go - scanning row", err.Error())
-		}
-		scannedTypes = append(scannedTypes, ty)
 	}
 	toDelete := scannedTypes
 	for _, ty := range t {
